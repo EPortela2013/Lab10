@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Lab10.sln
+/Lab10.sdf
+/Lab10.opensdf
+/.vs/Lab10/v14/.suo
+/Debug/Lab10.tlog
+/Debug/vc140.pdb
+/Debug/vc140.idb
+/Debug/main.obj
+/Debug/Lab10.pdb
+/Debug/Lab10.log
+/Debug/Lab10.ilk
+/Debug/Lab10.exe
