@@ -40,7 +40,7 @@ string Residential::toString() const
 	//Check if property is rental and append appropriate information
 	if (rental)
 	{
-		propertyInfoTemp << " rental";
+		propertyInfoTemp << " Rental";
 	}
 	else
 	{

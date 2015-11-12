@@ -16,3 +16,10 @@
 /Debug/Lab10.exe
 /Lab10.vcxproj.filters
 /Lab10.vcxproj
+*.obj
+*.tlog
+*.exe
+*.iobj
+/Release
+/Test1.txt
+/Test2.txt

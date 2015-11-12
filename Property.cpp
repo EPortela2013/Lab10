@@ -3,6 +3,8 @@
 
 using namespace std;
 
+int Property::nextID = 0;					//Initialize the next available id to 0
+
 Property::Property()
 {
 	address = "";
