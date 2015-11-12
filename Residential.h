@@ -16,10 +16,10 @@ public:
 	/*
 	* Constructor
 	*
-	* Sets all attributes to the passed values
+	* Sets all attributes to the passed values, id is set to the next available ID as indicated by the static member of Property "nextID"
 	*
 	*/
-	Residential(const string &newAddress, int newID, bool newRentalStatus, double newTaxRate, double newValue, bool newOccupiedStatus);
+	Residential(const string &newAddress, bool newRentalStatus, double newTaxRate, double newValue, bool newOccupiedStatus);
 
 
 	/*

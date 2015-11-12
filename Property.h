@@ -15,14 +15,13 @@ public:
 	Property();
 
 	/*
-	*  Constructor that sets all of the attributes to the given values
+	*  Constructor that sets all of the attributes to the given values, id is set to the next available ID as indicated by the static member "nextID"
 	*
 	* Parameter:  Address of the property
-	* Parameter:  Id of the property
 	* Parameter:  Boolean, true if property is rental, false otherwise
 	* Parameter:  Tax rate of property
 	*/
-	Property(const string &newAddress, int newID, bool newRentalStatus, double newTaxRate, double newValue);
+	Property(const string &newAddress, bool newRentalStatus, double newTaxRate, double newValue);
 
 	/*
 	* setAddress	
@@ -119,6 +118,8 @@ public:
 	*/
 	virtual double calculateTaxes() const = 0;
 
+	static int nextID;				//Holds the next available ID
+
 
 protected:
 	string address;					//Holds the property's address
@@ -126,7 +127,6 @@ protected:
 	bool rental;					//Set to true if property is rental, false otherwise
 	double taxRate;					//Holds the property's tax rate
 	double value;					//Holds the property's estimated value
-
 };
 
 

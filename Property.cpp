@@ -10,16 +10,20 @@ Property::Property()
 	rental = false;
 	taxRate = 0.0;
 	value = 0.0;
+	nextID++;
+
 }
 
 
-Property::Property(const string &newAddress, int newID, bool newRentalStatus, double newTaxRate, double newValue)
+Property::Property(const string &newAddress, bool newRentalStatus, double newTaxRate, double newValue)
 {
 
 	address = newAddress;
-	id = newID;
+	id = nextID;
 	rental = newRentalStatus;
 	taxRate = newTaxRate;
+	value = newValue;
+	nextID++;
 
 }
 
@@ -90,14 +94,14 @@ string Property::toString() const
 	//Check if property is rental and append appropriate information
 	if (rental)
 	{
-		propertyInfoTemp << " rental";
+		propertyInfoTemp << " Rental";
 	}
 	else
 	{
 		propertyInfoTemp << " NOT rental";
 	}
 
-	propertyInfoTemp << "Estimated value: " << value;
+	propertyInfoTemp << " Estimated value: " << value;
 
 	propertyInfoTemp << " Tax rate: " << taxRate;
 

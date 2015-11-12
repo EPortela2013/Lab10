@@ -1,13 +1,14 @@
 #include "Commercial.h"
+#include <sstream>
 
 using namespace std;
 
 Commercial::Commercial() : Property()
 {
-	occupiedStatus = false;
+	discountRate = 0.0;
 }
 
-Commercial::Commercial(const string &newAddress, int newID, bool newRentalStatus, double newTaxRate, double newValue, double newDiscountRate) : Property(newAddress, newID, newRentalStatus, newTaxRate, newValue)
+Commercial::Commercial(const string &newAddress, bool newRentalStatus, double newTaxRate, double newValue, double newDiscountRate) : Property(newAddress, newRentalStatus, newTaxRate, newValue)
 {
 	discountRate = newDiscountRate;
 }
@@ -26,7 +27,7 @@ double Commercial::getDiscountRate() const
 	return discountRate;
 }
 
-virtual double Commercial::calculateTaxes() const
+double Commercial::calculateTaxes() const
 {
 	const double WHOLE_RATE = 1.0;		//100%
 
@@ -36,7 +37,7 @@ virtual double Commercial::calculateTaxes() const
 }
 
 
-virtual string Commercial::toString() const
+string Commercial::toString() const
 {
 	ostringstream propertyInfoTemp;			//Stream that will temporarily hold the property's information
 
@@ -46,14 +47,14 @@ virtual string Commercial::toString() const
 	//Check if property is rental and append appropriate information
 	if (rental)
 	{
-		propertyInfoTemp << " rental";
+		propertyInfoTemp << " Rental";
 	}
 	else
 	{
 		propertyInfoTemp << " NOT rental";
 	}
 
-	propertyInfoTemp << "Estimated value: " << value;
+	propertyInfoTemp << " Estimated value: " << value;
 
 	//Check if property has a discount rate by checking if the discount rate is a positive number
 	if (discountRate > 0.0)
