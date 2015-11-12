@@ -16,6 +16,7 @@ int main()
 {
 
 	vector<Property *> properties;				//Vector to hold all the valid properties
+	char sortChoice;							//Will store user's sort preference, 'a' for alphabetical, 't' for tax amount due
 
 
 
@@ -28,10 +29,39 @@ int main()
 	//Display the properties
 	displayProperties(properties);
 
+	//Prompt user for sort preference
+	cout << endl << endl << "How would like like to sort the tax report?" << endl
+		<< "Type an 'a' for alphabetical order or a 't' for tax amount due" << endl
+		<< "or any other character for no sorting and press enter: ";
+
+	//Store choice
+	cin >> sortChoice;
+
+	//Display header for tax report
+	cout << endl << endl << "NOW PRINTING TAX REPORT:" << endl << endl;
+
+	//Check user's sort choice
+	switch (sortChoice)
+	{
+	case 'a': 
+	case 'A': 
+		//Alphabetical Order
+		sortAlphabetical(properties);
+		break;
+
+	case 't':
+	case 'T':
+		//Tax amount due
+		sortByTaxDue(properties);
+		break;
+
+	default:
+		//No sort, don't do anything
+		break;
+	}
+
 	//Display Tax Report
 	displayTaxReport(properties);
-
-	system("pause");
 
 	//Program terminating, unallocate memory
 	deleteProperties(properties);
@@ -46,7 +76,13 @@ void populateProperties(vector<Property *> &properties)
 	string readLine;										//Will temporarily store each read line
 	string propertyType;									//Will hold the type of property, valid values are "Commercial" or "Residential"
 	string propertyAddress;									//Will hold the property address
-	bool propertyRental;									//Will be set to true if property is a rental, false otherwise
+	int tempBoolean;										//Will be used to read boolean value from stream as int
+	const int SAFE_NON_BOOLEAN = 2;							//Will be used to reset the tempBoolean variable after testing for valid values
+	const int BOOLEAN_TRUE = 1;								//Integer representation of boolean true
+	const int BOOLEAN_FALSE = 0;							//Integer representation of boolean false
+	const double WHOLE_RATE = 1.0;							//100% - Discount rate cannot be bigger than this value
+	const double ZERO = 0.0;								//Used for comparisons
+	bool propertyRentalStatus;								//Will be set to true if property is a rental, false otherwise
 	bool occupiedStatus;									//Will be set to true if the residential property is occupied, false otherwise
 	bool discountRateStatus;								//Will be set to true if the commercial property has a tax discount rate
 	double discountRate;									//Will hold the commercial property's discount rate
@@ -99,26 +135,42 @@ void populateProperties(vector<Property *> &properties)
 				//Continue processing file as commercial property
 
 				//Read rental status
-				readStream >> propertyRental;
+				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail())
+				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
 				{
 					//Invalid value for rental status, invalid record
-					//Output warning message along with bad record, if it's not the end of the file
-					if(fileInput.get() == false) displayWarning("Ignoring bad COMMERCIAL in input file: ", readLine);
+					//Output warning message along with bad record
+					displayWarning("Ignoring bad COMMERCIAL in input file: ", readLine);
 
 					//Skip rest of iteration
 					continue;
 				}
 
+				//Update property rental status according to read-in value in tempBoolean
+
+				switch (tempBoolean)
+				{
+				case BOOLEAN_FALSE:
+					propertyRentalStatus = false;
+					break;
+				case BOOLEAN_TRUE:
+					propertyRentalStatus = true;
+					break;
+				}
+
+				//Reset tempBoolean for next read
+
+				tempBoolean = SAFE_NON_BOOLEAN;
+
 				//Read estimated property value
 				readStream >> propertyValue;
 
 				//Check for error
-				if (readStream.fail())
+				if (readStream.fail() || propertyValue <= ZERO)
 				{
-					//Invalid value for rental status, invalid record
+					//Invalid value for property value, invalid record
 					//Output warning message along with bad record
 					displayWarning("Ignoring bad COMMERCIAL in input file: ", readLine);
 
@@ -128,27 +180,44 @@ void populateProperties(vector<Property *> &properties)
 
 				//Read discount rate status
 
-				readStream >> discountRateStatus;
+				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail())
+				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
 				{
-					//Invalid value for rental status, invalid record
+					//Invalid value for discount rate status, invalid record
 					//Output warning message along with bad record
 					displayWarning("Ignoring bad COMMERCIAL in input file: ", readLine);
 
 					//Skip rest of iteration
 					continue;
 				}
+
+				//Update discount rate status according to read-in value in tempBoolean
+
+				switch (tempBoolean)
+				{
+				case BOOLEAN_FALSE:
+					discountRateStatus = false;
+					break;
+				case BOOLEAN_TRUE:
+					discountRateStatus = true;
+					break;
+				}
+
+				//Reset tempBoolean for next read
+
+				tempBoolean = SAFE_NON_BOOLEAN;
+
 
 				//Read discount rate
 
 				readStream >> discountRate;
 
 				//Check for error
-				if (readStream.fail())
+				if (readStream.fail() || (discountRateStatus == true && discountRate >= WHOLE_RATE) )
 				{
-					//Invalid value for rental status, invalid record
+					//Invalid value for discount rate, invalid record
 					//Output warning message along with bad record
 					displayWarning("Ignoring bad COMMERCIAL in input file: ", readLine);
 
@@ -156,8 +225,8 @@ void populateProperties(vector<Property *> &properties)
 					continue;
 				}
 
-				//If discount rate status is false, set discount rate to 0.0
-				if (discountRateStatus == false) discountRate = 0.0;
+				//If discount rate status is false, set discount rate to ZERO
+				if (discountRateStatus == false) discountRate = ZERO;
 
 				//Read address
 				getline(readStream, propertyAddress);
@@ -173,18 +242,18 @@ void populateProperties(vector<Property *> &properties)
 					continue;
 				}
 
-				//All of the record was read, create object and push it onto the vector
+				//All of the commercial record was read, create object and push it onto the vector
 
 
 
 				//Determine if property is rental as tax rate differs based on this
-				if (propertyRental == true)
+				if (propertyRentalStatus == true)
 				{
-					newProperty = new Commercial(propertyAddress, propertyRental, COM_TAX_RENTAL, propertyValue, discountRate);
+					newProperty = new Commercial(propertyAddress, propertyRentalStatus, COM_TAX_RENTAL, propertyValue, discountRate);
 				}
 				else
 				{
-					newProperty = new Commercial(propertyAddress, propertyRental, COM_TAX_NON_RENTAL, propertyValue, discountRate);
+					newProperty = new Commercial(propertyAddress, propertyRentalStatus, COM_TAX_NON_RENTAL, propertyValue, discountRate);
 
 				}
 
@@ -199,26 +268,43 @@ void populateProperties(vector<Property *> &properties)
 				//Continue processing file as residential property
 
 				//Read rental status
-				readStream >> propertyRental;
+				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail())
+				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
 				{
 					//Invalid value for rental status, invalid record
 					//Output warning message along with bad record
-					displayWarning("Ignoring bad RESIDENTIAL in input file: ", readLine);
+					displayWarning("Ignoring bad COMMERCIAL in input file: ", readLine);
 
 					//Skip rest of iteration
 					continue;
 				}
 
+				//Update property rental status according to read-in value in tempBoolean
+
+				switch (tempBoolean)
+				{
+				case BOOLEAN_FALSE:
+					propertyRentalStatus = false;
+					break;
+
+				case BOOLEAN_TRUE:
+					propertyRentalStatus = true;
+					break;
+				}
+
+				//Reset tempBoolean for next read
+				tempBoolean = SAFE_NON_BOOLEAN;
+
+
 				//Read estimated property value
 				readStream >> propertyValue;
 
 				//Check for error
-				if (readStream.fail())
+				if (readStream.fail() || propertyValue <= ZERO)
 				{
-					//Invalid value for rental status, invalid record
+					//Invalid value for property value, invalid record
 					//Output warning message along with bad record
 					displayWarning("Ignoring bad RESIDENTIAL in input file: ", readLine);
 
@@ -228,18 +314,34 @@ void populateProperties(vector<Property *> &properties)
 
 				//Read occupied status
 
-				readStream >> occupiedStatus;
+				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail())
+				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
 				{
-					//Invalid value for rental status, invalid record
+					//Invalid value for property occupied status, invalid record
 					//Output warning message along with bad record
-					displayWarning("Ignoring bad RESIDENTIAL in input file: ", readLine);
+					displayWarning("Ignoring bad COMMERCIAL in input file: ", readLine);
 
 					//Skip rest of iteration
 					continue;
 				}
+
+				//Update property occupied status according to read-in value in tempBoolean
+
+				switch (tempBoolean)
+				{
+				case BOOLEAN_FALSE:
+					occupiedStatus = false;
+					break;
+
+				case BOOLEAN_TRUE:
+					occupiedStatus = true;
+					break;
+				}
+
+				//Reset tempBoolean for next read
+				tempBoolean = SAFE_NON_BOOLEAN;
 
 				//Read address
 				getline(readStream, propertyAddress);
@@ -247,7 +349,7 @@ void populateProperties(vector<Property *> &properties)
 				//Check for error
 				if (readStream.fail())
 				{
-					//Invalid value for rental status, invalid record
+					//Invalid value for property address, invalid record
 					//Output warning message along with bad record
 					displayWarning("Ignoring bad RESIDENTIAL in input file: ", readLine);
 
@@ -255,18 +357,18 @@ void populateProperties(vector<Property *> &properties)
 					continue;
 				}
 
-				//All of the record was read, create object and push it onto the vector
+				//All of the residential record was read, create object and push it onto the vector
 
 
 
 				//Determine if property is occupied as tax rate differs based on this
 				if (occupiedStatus == true)
 				{
-					newProperty = new Residential(propertyAddress, propertyRental, RES_TAX_OCCUPIED, propertyValue, occupiedStatus);
+					newProperty = new Residential(propertyAddress, propertyRentalStatus, RES_TAX_OCCUPIED, propertyValue, occupiedStatus);
 				}
 				else
 				{
-					newProperty = new Residential(propertyAddress, propertyRental, RES_TAX_UNOCCUPIED, propertyValue, occupiedStatus);
+					newProperty = new Residential(propertyAddress, propertyRentalStatus, RES_TAX_UNOCCUPIED, propertyValue, occupiedStatus);
 
 				}
 
@@ -284,7 +386,8 @@ void populateProperties(vector<Property *> &properties)
 				if (fileInput.eof() == false)
 				{
 					//Output warning message along with bad record
-					displayWarning("Ignoring unknown types of properties appearing in the input file: ", readLine);
+					if (readLine != "") displayWarning("Ignoring unknown types of properties appearing in the input file: ", readLine);
+					else displayWarning("Ignoring bad input in input file: ", "");
 
 				}
 				else
@@ -300,6 +403,15 @@ void populateProperties(vector<Property *> &properties)
 
 		}
 
+		//Close file
+		fileInput.close();
+
+	}
+	else
+	{
+		//Unable to open file
+		//Display error message
+		cout << "Unable to open file!" << endl;
 	}
 
 
@@ -311,6 +423,14 @@ void populateProperties(vector<Property *> &properties)
 void displayProperties(const vector<Property *> &properties)
 {
 	int vectorSize = properties.size();				//Store the vector size
+
+	//Check if vector is empty
+	if (vectorSize == 0)
+	{
+		//Vector is empty, display message and return
+		cout << "There are no valid properties to display " << endl;
+		
+	}
 
 	//Iterate through the whole vector
 	for (int i = 0; i < vectorSize; i++)
@@ -328,6 +448,14 @@ void displayTaxReport(const vector<Property *> &properties)
 {
 	int vectorSize = properties.size();				//Store the vector size
 
+	//Check if vector is empty
+	if (vectorSize == 0)
+	{
+		//Vector is empty, display message and return
+		cout << "There are no valid properties to display " << endl;
+
+	}
+
 	//Iterate through the whole vector
 	for (int i = 0; i < vectorSize; i++)
 	{
@@ -335,10 +463,11 @@ void displayTaxReport(const vector<Property *> &properties)
 		if (properties[i] != NULL)
 		{
 			//Display current property's tax due information
-			cout << "** Taxes due for the property at: " << properties[i]->getAddress() << endl
-				 << "   Property id:" << setw(20) << properties[i]->getID() << endl
-				 << "   This property has an estimated value of: "
-			cout << properties[i]->toString() << endl;
+			cout << "** Taxes due for the property at: " << setw(26) <<  properties[i]->getAddress() << endl
+				<< "   Property id:" << setw(45) << properties[i]->getID() << endl
+				<< "   This property has an estimated value of: " << setw(16) << properties[i]->getValue() << endl
+				<< "   Taxes due on this property are: " << setw(25) << properties[i]->calculateTaxes() << endl << endl;
+
 		}
 	}
 }
@@ -360,4 +489,125 @@ void deleteProperties(vector<Property *> &properties)
 void displayWarning(const string &message, const string &record)
 {
 	cout << endl << message << record;
+}
+
+
+void sortAlphabetical(vector<Property *> &properties)
+{
+
+	int vectorSize = properties.size();						//Store vector size
+	bool sorted;											//Set to true if properties are in sorted order
+	Property * temp;										//Will temporarily hold a pointed to be moved
+
+    //If vector is empty return
+	if (vectorSize == 0) return;
+
+	//Loop until all are sorted
+	do
+	{
+		// Reset sort flag to true for each iteration
+		sorted = true;
+
+		//Iterate through all of the properties
+		//Stop at vectorSize - 1 to avoid accessing outside vector limits
+		for (int i = 0; i < vectorSize - 1; i++)
+		{
+			//Check to make sure neither pointer points to NULL
+			if (properties[i] != NULL && properties[i + 1] != NULL)
+			{
+				//Create string streams to extract numeric part of addresses
+				istringstream addressStream1(properties[i]->getAddress());
+				istringstream addressStream2(properties[i + 1]->getAddress());
+
+				//Create integers to hold numeric part of addresses
+				int numAddress1;
+				int numAddress2;
+
+				//Create strings to hold the remainder of the addresses
+				string address1;
+				string address2;
+
+				//Store numeric parts
+				addressStream1 >> numAddress1;
+				addressStream2 >> numAddress2;
+
+				//Store remainder parts
+				getline(addressStream1, address1);
+				getline(addressStream2, address2);
+
+				//Compare current item with next item
+				if (numAddress2 < numAddress1)
+				{
+					//Switch pointer positions
+					temp = properties[i];
+					properties[i] = properties[i + 1];
+					properties[i + 1] = temp;
+
+					//Set flag to do outer loop once more
+					sorted = false;
+				}
+				else if (numAddress1 == numAddress2)
+				{
+					//Numeric parts are identical, compare using remainder of addresses
+					if (address2 < address1)
+					{
+						//Switch pointer positions
+						temp = properties[i];
+						properties[i] = properties[i + 1];
+						properties[i + 1] = temp;
+
+						//Set flag to do outer loop once more
+						sorted = false;
+					}
+				}
+
+			}
+
+
+		}
+
+	} while (!sorted);
+
+}
+
+void sortByTaxDue(vector<Property *> &properties)
+{
+	int vectorSize = properties.size();						//Store vector size
+	bool sorted;											//Set to true if properties are in sorted order
+	Property * temp;										//Will temporarily hold a pointed to be moved
+
+	//If vector is empty return
+	if (vectorSize == 0) return;
+
+	//Loop until all are sorted
+	do
+	{
+		// Reset sort flag to true for each iteration
+		sorted = true;
+
+		//Iterate through all of the properties
+		//Stop at vectorSize - 1 to avoid accessing outside vector limits
+		for (int i = 0; i < vectorSize - 1; i++)
+		{
+			//Check to make sure neither pointer points to NULL
+			if (properties[i] != NULL && properties[i + 1] != NULL)
+			{
+				//Compare current item with next item
+				if (properties[i]->calculateTaxes() > properties[i + 1]->calculateTaxes())
+				{
+					//Switch pointer positions
+					temp = properties[i];
+					properties[i] = properties[i + 1];
+					properties[i + 1] = temp;
+
+					//Set flag to do outer loop once more
+					sorted = false;
+				}
+			}
+
+
+		}
+
+	} while (!sorted);
+
 }

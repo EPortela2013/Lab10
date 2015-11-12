@@ -118,7 +118,7 @@ public:
 	*/
 	virtual double calculateTaxes() const = 0;
 
-	static int nextID;				//Holds the next available ID
+
 
 
 protected:
@@ -127,6 +127,7 @@ protected:
 	bool rental;					//Set to true if property is rental, false otherwise
 	double taxRate;					//Holds the property's tax rate
 	double value;					//Holds the property's estimated value
+	static int nextID;				//Holds the next available ID
 };
 
 

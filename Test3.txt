@@ -1,0 +1,12 @@
+Cmmercial  1 9987456 0 2.2 2324 Somewhere Over The Rainbow
+dential  1 9987456 0 2.2 2324 Somewhere Over The Rainbow
+Residential 0 56468 1 13242 Blue Moon Dr
+Commercial 1 9987456 0 2.2 2324 Somewhere Over The Rainbow
+Residential 1 987614 0 456 Pick Up Sticks
+
+
+Commercial 0 23412 1 0.234 93902 Thomas Edison Industrial Park
+Residential 0 2342 1 2143 Galileo Drive
+Rsidential  0 2342 1 2143 Galileo Drive
+
+

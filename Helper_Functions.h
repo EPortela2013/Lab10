@@ -20,7 +20,6 @@ void populateProperties(vector<Property *> &properties);
 */
 void displayProperties(const vector<Property *> &properties);
 
-
 /*
 * displayTaxReport
 *
@@ -29,6 +28,17 @@ void displayProperties(const vector<Property *> &properties);
 * Parameter: Vector of properties
 */
 void displayTaxReport(const vector<Property *> &properties);
+
+/*
+* displayWarning
+*
+* Displays warning message and misformed record
+*
+* Parameter: Warning message
+* Parameter: Misformed record
+*/
+void displayWarning(const string &message, const string &record);
+
 
 
 /*
@@ -42,13 +52,21 @@ void deleteProperties(vector<Property *> &properties);
 
 
 /*
-* displayWarning
+* sortAlphabetical
 *
-* Displays warning message and misformed record
+* Sorts the properties in the given vector by alphabetical order
 *
-* Parameter: Warning message
-* Parameter: Misformed record
+* Parameter: Vector of properties
 */
-void displayWarning(const string &message, const string &record);
+void sortAlphabetical(vector<Property *> &properties);
+
+/*
+* sortByTaxDue
+*
+* Sorts the properties in the given vector by increasing tax due amount
+*
+* Parameter: Vector of properties
+*/
+void sortByTaxDue(vector<Property *> &properties);
 
 #endif
