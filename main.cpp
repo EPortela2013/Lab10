@@ -78,8 +78,8 @@ void populateProperties(vector<Property *> &properties)
 	string propertyAddress;									//Will hold the property address
 	int tempBoolean;										//Will be used to read boolean value from stream as int
 	const int SAFE_NON_BOOLEAN = 2;							//Will be used to reset the tempBoolean variable after testing for valid values
-	const int BOOLEAN_TRUE = 1;								//Integer representation of boolean true
-	const int BOOLEAN_FALSE = 0;							//Integer representation of boolean false
+	const int INT_TRUE = 1;								//Integer representation of boolean true
+	const int INT_FALSE = 0;							//Integer representation of boolean false
 	const double WHOLE_RATE = 1.0;							//100% - Discount rate cannot be bigger than this value
 	const double ZERO = 0.0;								//Used for comparisons
 	bool propertyRentalStatus;								//Will be set to true if property is a rental, false otherwise
@@ -138,7 +138,7 @@ void populateProperties(vector<Property *> &properties)
 				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
+				if (readStream.fail() || (tempBoolean > INT_TRUE || tempBoolean < INT_FALSE))
 				{
 					//Invalid value for rental status, invalid record
 					//Output warning message along with bad record
@@ -152,10 +152,10 @@ void populateProperties(vector<Property *> &properties)
 
 				switch (tempBoolean)
 				{
-				case BOOLEAN_FALSE:
+				case INT_FALSE:
 					propertyRentalStatus = false;
 					break;
-				case BOOLEAN_TRUE:
+				case INT_TRUE:
 					propertyRentalStatus = true;
 					break;
 				}
@@ -183,7 +183,7 @@ void populateProperties(vector<Property *> &properties)
 				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
+				if (readStream.fail() || (tempBoolean > INT_TRUE || tempBoolean < INT_FALSE))
 				{
 					//Invalid value for discount rate status, invalid record
 					//Output warning message along with bad record
@@ -197,10 +197,10 @@ void populateProperties(vector<Property *> &properties)
 
 				switch (tempBoolean)
 				{
-				case BOOLEAN_FALSE:
+				case INT_FALSE:
 					discountRateStatus = false;
 					break;
-				case BOOLEAN_TRUE:
+				case INT_TRUE:
 					discountRateStatus = true;
 					break;
 				}
@@ -271,7 +271,7 @@ void populateProperties(vector<Property *> &properties)
 				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
+				if (readStream.fail() || (tempBoolean > INT_TRUE || tempBoolean < INT_FALSE))
 				{
 					//Invalid value for rental status, invalid record
 					//Output warning message along with bad record
@@ -285,11 +285,11 @@ void populateProperties(vector<Property *> &properties)
 
 				switch (tempBoolean)
 				{
-				case BOOLEAN_FALSE:
+				case INT_FALSE:
 					propertyRentalStatus = false;
 					break;
 
-				case BOOLEAN_TRUE:
+				case INT_TRUE:
 					propertyRentalStatus = true;
 					break;
 				}
@@ -317,7 +317,7 @@ void populateProperties(vector<Property *> &properties)
 				readStream >> tempBoolean;
 
 				//Check for error
-				if (readStream.fail() || (tempBoolean > BOOLEAN_TRUE || tempBoolean < BOOLEAN_FALSE))
+				if (readStream.fail() || (tempBoolean > INT_TRUE || tempBoolean < INT_FALSE))
 				{
 					//Invalid value for property occupied status, invalid record
 					//Output warning message along with bad record
@@ -331,11 +331,11 @@ void populateProperties(vector<Property *> &properties)
 
 				switch (tempBoolean)
 				{
-				case BOOLEAN_FALSE:
+				case INT_FALSE:
 					occupiedStatus = false;
 					break;
 
-				case BOOLEAN_TRUE:
+				case INT_TRUE:
 					occupiedStatus = true;
 					break;
 				}
