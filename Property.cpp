@@ -1,5 +1,6 @@
 #include "Property.h"
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -106,6 +107,20 @@ string Property::toString() const
 	propertyInfoTemp << " Estimated value: " << value;
 
 	propertyInfoTemp << " Tax rate: " << taxRate;
+
+	return propertyInfoTemp.str();
+
+}
+
+
+string Property::getTaxInformation() const
+{
+	ostringstream propertyInfoTemp;			//Stream that will temporarily hold the property's tax information
+
+	propertyInfoTemp << "** Taxes due for the property at: " << setw(26) << address << endl
+				     << "   Property id:" << setw(45) << id << endl
+					 << "   This property has an estimated value of: " << setw(16) << value << endl
+					 << "   Taxes due on this property are: " << setw(25) << calculateTaxes() << endl;
 
 	return propertyInfoTemp.str();
 

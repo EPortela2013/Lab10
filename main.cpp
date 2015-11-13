@@ -66,6 +66,8 @@ int main()
 	//Program terminating, unallocate memory
 	deleteProperties(properties);
 
+	system("pause");
+
 	return 0;
 }
 
@@ -463,10 +465,7 @@ void displayTaxReport(const vector<Property *> &properties)
 		if (properties[i] != NULL)
 		{
 			//Display current property's tax due information
-			cout << "** Taxes due for the property at: " << setw(26) <<  properties[i]->getAddress() << endl
-				<< "   Property id:" << setw(45) << properties[i]->getID() << endl
-				<< "   This property has an estimated value of: " << setw(16) << properties[i]->getValue() << endl
-				<< "   Taxes due on this property are: " << setw(25) << properties[i]->calculateTaxes() << endl << endl;
+			cout << properties[i]->getTaxInformation() << endl;
 
 		}
 	}

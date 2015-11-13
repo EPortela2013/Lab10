@@ -113,11 +113,18 @@ public:
 	virtual string toString() const;
 
 	/*
+	* displayTaxInformation
+	*
+	*
+	* Returns the tax information for the property as a string
+	*/
+	virtual string getTaxInformation() const;
+
+	/*
 	* calculateTaxes
 	*  Returns the calculated property tax, pure virtual function
 	*/
 	virtual double calculateTaxes() const = 0;
-
 
 
 
@@ -128,6 +135,9 @@ protected:
 	double taxRate;					//Holds the property's tax rate
 	double value;					//Holds the property's estimated value
 	static int nextID;				//Holds the next available ID
+
+
+
 };
 
 
